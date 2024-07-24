@@ -3,10 +3,10 @@ import useOutsideClick from "../helpers/useOutsideClick";
 import InputComponent from "./InputComponent";
 import SelectComponent from "./SelectComponent";
 import { RoleEnum } from "../enums/roleEnum";
-import { UserDataType, UserContextType } from "../types/userDataType";
-import { UserContext } from "../contexts/UserContext";
+import { ContactDataType, UserContextType } from "../types/contactDataType";
+import { UserContext } from "../contexts/ContactsContext";
 import { usersFormData } from "../data/formData";
-import { userInitialState } from "../contexts/UserContext";
+import { contactInitialState } from "../contexts/ContactsContext";
 
 import { useContext } from "react";
 interface DataType {
@@ -14,22 +14,22 @@ interface DataType {
 }
 
 const FormModal: React.FC<DataType> = ({ setOpenModal }) => {
-    const { addUser, updateUser, isEditing, setIsEditing, currentUser, setCurrentUser } = useContext(UserContext) as UserContextType;
+    const { addContact, updateContact, isEditing, setIsEditing, currentContact, setCurrentContact } = useContext(UserContext) as UserContextType;
     const clickRef = useOutsideClick(() => {
         setOpenModal(false);
     });
 
     const handleForm = (key: string, value: string): void => {
-        setCurrentUser({ ...currentUser, [key]: value });
+        setCurrentContact({ ...currentContact, [key]: value });
     }
 
-    const handleAddData = (e: React.FormEvent, formData: UserDataType) => {
+    const handleAddData = (e: React.FormEvent, formData: ContactDataType) => {
         e.preventDefault();
         console.log(formData);
-        isEditing ? updateUser(formData) : addUser(formData);
+        isEditing ? updateContact(formData) : addContact(formData);
         setOpenModal(false);
         setIsEditing(false);
-        setCurrentUser(userInitialState);
+        setCurrentContact(contactInitialState);
     }
 
     return (
@@ -39,10 +39,10 @@ const FormModal: React.FC<DataType> = ({ setOpenModal }) => {
                 <ImCross onClick={() => setOpenModal(false)} className="absolute top-2 right-0 cursor-pointer" />
                 <hr className="h-[1px] bg-white my-4" />
             </div>
-            <form onSubmit={(e) => handleAddData(e, currentUser)} className="mt-8 flex flex-col gap-5">
-                {usersFormData.map(data => <InputComponent key={data.id} handleForm={handleForm} id={data.id} label={data.label} placeholder={`Enter ${data.label}`} type={data.type ?? "text"} value={currentUser[data.id as keyof UserDataType]} />)}
+            <form onSubmit={(e) => handleAddData(e, currentContact)} className="mt-8 flex flex-col gap-5">
+                {usersFormData.map(data => <InputComponent key={data.id} handleForm={handleForm} id={data.id} label={data.label} placeholder={`Enter ${data.label}`} type={data.type ?? "text"} value={currentContact[data.id as keyof ContactDataType]} />)}
                 <div className="grid grid-cols-[6rem_auto] gap-4 items-center">Role:
-                    <SelectComponent changeHandler={handleForm} options={Object.values(RoleEnum).filter(role => role !== RoleEnum.ALL)} id="role" defaultValue={isEditing ? currentUser.role : "Select Role"} customClasses="rounded-md" />
+                    <SelectComponent changeHandler={handleForm} options={Object.values(RoleEnum).filter(role => role !== RoleEnum.ALL)} id="role" defaultValue={isEditing ? currentContact.role : "Select Role"} customClasses="rounded-md" />
                 </div>
                 <button className="rounded-md px-8 ms-auto py-1.5 w-fit bg-[#9b5de5] hover:bg-black hover:text-white">{isEditing ? "UPDATE" : "ADD"}</button>
             </form>

@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
-import UsersProvider from "./contexts/UserContext";
+import UsersProvider from "./contexts/ContactsContext";
 
 const App = () => {
     return <div>

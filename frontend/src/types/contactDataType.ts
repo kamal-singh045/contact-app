@@ -1,4 +1,5 @@
-export interface UserDataType {
+export interface ContactDataType {
+    _id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -11,15 +12,15 @@ export interface UserDataType {
 }
 
 export interface UserContextType {
-    users: UserDataType[];
-    addUser: (user: UserDataType) => void;
-    updateUser: (user: UserDataType) => void;
-    deleteUser: (id: string) => void;
-    filterUsers: (role: string) => void;
+    contacts: ContactDataType[];
+    addContact: (user: ContactDataType) => void;
+    updateContact: (user: ContactDataType) => void;
+    deleteContact: (id: string) => void;
+    filterContacts: (role: string) => void;
     isEditing: boolean;
     setIsEditing: (_: boolean) => void;
-    currentUser: UserDataType;
-    setCurrentUser: (user: UserDataType) => void;
+    currentContact: ContactDataType;
+    setCurrentContact: (user: ContactDataType) => void;
     openModal: boolean;
     setOpenModal: (_: boolean) => void;
 }

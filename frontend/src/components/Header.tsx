@@ -2,17 +2,17 @@ import { useContext } from "react";
 import { RoleEnum } from "../enums/roleEnum";
 import FormModal from "./FormModal";
 import SelectComponent from "./SelectComponent";
-import { UserContextType } from "../types/userDataType";
-import { UserContext } from "../contexts/UserContext";
+import { UserContextType } from "../types/contactDataType";
+import { UserContext } from "../contexts/ContactsContext";
 
 const Header = () => {
-    const { filterUsers, openModal, setOpenModal } = useContext(UserContext) as UserContextType;
+    const { filterContacts, openModal, setOpenModal } = useContext(UserContext) as UserContextType;
 
     function handleAddClick() {
         setOpenModal(true);
     }
     const handleSelect = (key: string, value: string) => {
-        filterUsers(value);
+        filterContacts(value);
         console.log(key, value);
     }
 

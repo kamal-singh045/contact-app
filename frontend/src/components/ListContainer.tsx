@@ -1,14 +1,14 @@
-import SingleUser from "./SingleUser";
-import { UserContext } from "../contexts/UserContext";
+import SingleContact from "./SingleContact";
+import { UserContext } from "../contexts/ContactsContext";
 import { useContext } from "react";
-import { UserContextType } from "../types/userDataType";
+import { UserContextType } from "../types/contactDataType";
 
 const ListContainer = () => {
-    const { users } = useContext(UserContext) as UserContextType;
+    const { contacts } = useContext(UserContext) as UserContextType;
 
     return (
         <div className="flex flex-col gap-3 p-4">
-            {users.map(user => <SingleUser key={user.email} user={user} />)}
+            {contacts.map(contact => <SingleContact key={contact._id} contact={contact} />)}
         </div>
     )
 }
