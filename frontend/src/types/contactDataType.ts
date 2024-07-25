@@ -11,16 +11,22 @@ export interface ContactDataType {
     salary: string;
 }
 
-export interface UserContextType {
+export interface ContactsContextType {
     contacts: ContactDataType[];
     addContact: (user: ContactDataType) => void;
     updateContact: (user: ContactDataType) => void;
     deleteContact: (id: string) => void;
-    filterContacts: (role: string) => void;
+    setSearchFilter: (search: string) => void;
+    setRoleFilter: (role: string) => void;
     isEditing: boolean;
     setIsEditing: (_: boolean) => void;
     currentContact: ContactDataType;
     setCurrentContact: (user: ContactDataType) => void;
     openModal: boolean;
     setOpenModal: (_: boolean) => void;
+    totalContacts: number;
+    setPageLimit: (_: number) => void;
+    pageLimit: number;
+    setCurrentPage: (_: number) => void;
+    currentPage: number;
 }

@@ -3,8 +3,8 @@ import useOutsideClick from "../helpers/useOutsideClick";
 import InputComponent from "./InputComponent";
 import SelectComponent from "./SelectComponent";
 import { RoleEnum } from "../enums/roleEnum";
-import { ContactDataType, UserContextType } from "../types/contactDataType";
-import { UserContext } from "../contexts/ContactsContext";
+import { ContactDataType, ContactsContextType } from "../types/contactDataType";
+import { ContactsContext } from "../contexts/ContactsContext";
 import { usersFormData } from "../data/formData";
 import { contactInitialState } from "../contexts/ContactsContext";
 
@@ -14,7 +14,7 @@ interface DataType {
 }
 
 const FormModal: React.FC<DataType> = ({ setOpenModal }) => {
-    const { addContact, updateContact, isEditing, setIsEditing, currentContact, setCurrentContact } = useContext(UserContext) as UserContextType;
+    const { addContact, updateContact, isEditing, setIsEditing, currentContact, setCurrentContact } = useContext(ContactsContext) as ContactsContextType;
     const clickRef = useOutsideClick(() => {
         setOpenModal(false);
     });
@@ -33,7 +33,7 @@ const FormModal: React.FC<DataType> = ({ setOpenModal }) => {
     }
 
     return (
-        <div ref={clickRef} className={`rounded-md fixed top-[50%] left-[50%] -translate-x-2/4 -translate-y-2/4 bg-[#d6bdf6] w-[97vw] md:w-[90vw] 2xl:w-[60vw] min-h-[20rem] p-4 md:p-8`}>
+        <div ref={clickRef} className={`rounded-md fixed top-[50%] left-[50%] -translate-x-2/4 -translate-y-2/4 bg-[#d6bdf6] w-[97vw] md:w-[90vw] 2xl:w-[60vw] min-h-[20rem] p-4 md:p-8 z-10`}>
             <div className="relative">
                 <h4 className="text-2xl font-semibold text-center">Fill the details</h4>
                 <ImCross onClick={() => setOpenModal(false)} className="absolute top-2 right-0 cursor-pointer" />

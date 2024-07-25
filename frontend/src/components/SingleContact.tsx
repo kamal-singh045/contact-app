@@ -1,11 +1,13 @@
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
-import { UserContextType, ContactDataType } from "../types/contactDataType";
-import { UserContext } from "../contexts/ContactsContext";
-import { useContext } from "react";
+import { ContactsContextType, ContactDataType } from "../types/contactDataType";
+import { ContactsContext } from "../contexts/ContactsContext";
+import { useContext, useState } from "react";
+import { RiArrowUpDoubleFill, RiArrowDownDoubleFill } from "react-icons/ri";
 
-const SingleContact = ({ contact }: { contact: ContactDataType }) => {
-    const { setOpenModal, setIsEditing, setCurrentContact, deleteContact } = useContext(UserContext) as UserContextType;
+const SingleContact = ({ contact, bgColor }: { contact: ContactDataType, bgColor: string }) => {
+    const { setOpenModal, setIsEditing, setCurrentContact, deleteContact } = useContext(ContactsContext) as ContactsContextType;
+    const [readMore, setReadMore] = useState(false);
 
     const handleUpdateClick = () => {
         setOpenModal(true);
@@ -13,19 +15,28 @@ const SingleContact = ({ contact }: { contact: ContactDataType }) => {
         setCurrentContact(contact);
     }
 
+    const handleReadMore = () => {
+        setReadMore(prev => !prev);
+    }
+
     return (
-        <div className={`grid grid-cols-[3fr_3fr_1fr] text-white bg-[#c067d4] px-6 py-4 rounded-md items-center`}>
-            <div className="flex flex-col">
-                <p>Name: <span className="text-[#1b263b] ms-3 font-semibold">{contact.firstName} {contact.lastName}</span></p>
+        <div className={`text-[#d2d0d0] ${bgColor} px-6 py-4 pb-6 rounded-md relative`}>
+            <p className="text-center text-white font-semibold text-xl mb-3">{contact.firstName} {contact.lastName}</p>
+            <div className="grid md:grid-cols-[1fr_1fr]">
                 <p>Email: <span className="text-[#1b263b] ms-3 font-semibold">{contact.email}</span></p>
-            </div>
-            <div className="flex flex-col">
                 <p>Role: <span className="text-[#1b263b] ms-3 font-semibold">{contact.role}</span></p>
-                <p>Salary: <span className="text-[#1b263b] ms-3 font-semibold">{contact.salary}</span></p>
+                {readMore && <>
+                    <p>Salary: <span className="text-[#1b263b] ms-3 font-semibold">{contact.salary}</span></p>
+                    <p>Address: <span className="text-[#1b263b] ms-3 font-semibold">{contact.address}</span></p>
+                    <p>Contact No.: <span className="text-[#1b263b] ms-3 font-semibold">{contact.contactNumber}</span></p>
+                    <p>Date of Birth: <span className="text-[#1b263b] ms-3 font-semibold">{contact.dateOfBirth}</span></p>
+                    <p>Joining Date: <span className="text-[#1b263b] ms-3 font-semibold">{contact.joiningDate}</span></p>
+                </>}
             </div>
-            <div className="flex gap-4 text-xl">
-                <FaEdit onClick={handleUpdateClick} className="cursor-pointer hover:shadow-2xl hover:text-black" />
-                <MdDeleteForever onClick={() => deleteContact(contact._id)} className="cursor-pointer hover:shadow-2xl hover:text-black" />
+            <span onClick={handleReadMore} className={`absolute text-white text-2xl bottom-0 left-[50%] cursor-pointer`} >{readMore ? <RiArrowUpDoubleFill /> : <RiArrowDownDoubleFill /> } </span>
+            <div className="flex gap-4 text-xl absolute top-8 right-2 text-white">
+                <FaEdit onClick={handleUpdateClick} className="cursor-pointer text-[#06aed5] text-2xl" />
+                <MdDeleteForever onClick={() => deleteContact(contact._id)} className="cursor-pointer text-[#ef2917] text-2xl" />
             </div>
         </div>
     )
