@@ -8,16 +8,17 @@ import { ContactsContext } from "../contexts/ContactsContext";
 import { usersFormData } from "../data/formData";
 import { contactInitialState } from "../contexts/ContactsContext";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import ContactSchema from "../validators/contactValidation";
+
 interface DataType {
     setOpenModal: (_: boolean) => void;
 }
 
 const FormModal: React.FC<DataType> = ({ setOpenModal }) => {
     const { addContact, updateContact, isEditing, setIsEditing, currentContact, setCurrentContact } = useContext(ContactsContext) as ContactsContextType;
-    const clickRef = useOutsideClick(() => {
-        setOpenModal(false);
-    });
+    const clickRef = useOutsideClick(() => { setOpenModal(false); });
+    const [formErrors, setFormErrors] = useState<any>({});
 
     const handleForm = (key: string, value: string): void => {
         setCurrentContact({ ...currentContact, [key]: value });
@@ -25,11 +26,24 @@ const FormModal: React.FC<DataType> = ({ setOpenModal }) => {
 
     const handleAddData = (e: React.FormEvent, formData: ContactDataType) => {
         e.preventDefault();
-        console.log(formData);
-        isEditing ? updateContact(formData) : addContact(formData);
-        setOpenModal(false);
-        setIsEditing(false);
-        setCurrentContact(contactInitialState);
+        try {
+            const parsedData = ContactSchema.safeParse(formData);
+            if(!parsedData.success){
+                const errors: any = {};
+                parsedData.error.issues.forEach(err => {
+                    errors[err.path[0]] = err.message;
+                });
+                setFormErrors(errors);
+                return;
+            }
+            
+            isEditing ? updateContact(parsedData.data as ContactDataType) : addContact(parsedData.data as ContactDataType);
+            setOpenModal(false);
+            setIsEditing(false);
+            setCurrentContact(contactInitialState);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -39,10 +53,11 @@ const FormModal: React.FC<DataType> = ({ setOpenModal }) => {
                 <ImCross onClick={() => setOpenModal(false)} className="absolute top-2 right-0 cursor-pointer" />
                 <hr className="h-[1px] bg-white my-4" />
             </div>
-            <form onSubmit={(e) => handleAddData(e, currentContact)} className="mt-8 flex flex-col gap-5">
-                {usersFormData.map(data => <InputComponent key={data.id} handleForm={handleForm} id={data.id} label={data.label} placeholder={`Enter ${data.label}`} type={data.type ?? "text"} value={currentContact[data.id as keyof ContactDataType]} />)}
+            <form onSubmit={(e) => handleAddData(e, currentContact)} className="mt-8 flex flex-col gap-8">
+                {usersFormData.map(data => <InputComponent key={data.id} handleForm={handleForm} id={data.id} label={data.label} placeholder={`Enter ${data.label}`} error={formErrors[data.id]} type={data.type ?? "text"} value={currentContact[data.id as keyof ContactDataType]} />)}
+
                 <div className="grid grid-cols-[6rem_auto] gap-4 items-center">Role:
-                    <SelectComponent changeHandler={handleForm} options={Object.values(RoleEnum).filter(role => role !== RoleEnum.ALL)} id="role" defaultValue={isEditing ? currentContact.role : "Select Role"} customClasses="rounded-md" />
+                    <SelectComponent changeHandler={handleForm} options={Object.values(RoleEnum).filter(role => role !== RoleEnum.ALL)} id="role" defaultValue={isEditing ? currentContact.role : "Select Role"} customClasses="rounded-md" roleError={formErrors?.role} />
                 </div>
                 <button className="rounded-md px-8 ms-auto py-1.5 w-fit bg-[#9b5de5] hover:bg-black hover:text-white">{isEditing ? "UPDATE" : "ADD"}</button>
             </form>
