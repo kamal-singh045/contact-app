@@ -1,38 +1,38 @@
 export const usersFormData = [
     {
-        id: "firstName",
+        name: "firstName",
         label: "First Name"
     },
     {
-        id: "lastName",
+        name: "lastName",
         label: "Last Name"
     },
     {
-        id: "email",
+        name: "email",
         label: "Email",
         type: 'email'
     },
     {
-        id: "dateOfBirth",
+        name: "dateOfBirth",
         label: "Date of Birth",
         type: 'date'
     },
     {
-        id: "contactNumber",
+        name: "contactNumber",
         label: "Contact No.",
         type: 'number'
     },
     {
-        id: "address",
+        name: "address",
         label: "Address"
     },
     {
-        id: "joiningDate",
+        name: "joiningDate",
         label: "Joining Date",
         type: 'date'
     },
     {
-        id: "salary",
+        name: "salary",
         label: "Salary(₹)",
         type: 'number'
     }

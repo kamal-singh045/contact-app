@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import * as z from 'zod';
 import { RoleEnum } from '../enums/roleEnum';
 
 const Roles = Object.values(RoleEnum);
 
 const ContactSchema = z.object({
-	_id: z.string(),
+	_id: z.string().optional(),
 	firstName: z.string().min(1, "Invalid First Name"),
 	lastName: z.string().min(1, "Invalid Last Name"),
 	email: z.string().email("Invalid Email"),

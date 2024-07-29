@@ -6,13 +6,14 @@ import { useContext, useState } from "react";
 import { RiArrowUpDoubleFill, RiArrowDownDoubleFill } from "react-icons/ri";
 
 const SingleContact = ({ contact, bgColor }: { contact: ContactDataType, bgColor: string }) => {
-    const { setOpenModal, setIsEditing, setCurrentContact, deleteContact } = useContext(ContactsContext) as ContactsContextType;
+    const { setOpenModal, setIsEditing, setCurrentContact, deleteContact, methods } = useContext(ContactsContext) as ContactsContextType;
     const [readMore, setReadMore] = useState(false);
 
     const handleUpdateClick = () => {
         setOpenModal(true);
         setIsEditing(true);
         setCurrentContact(contact);
+        methods.reset({ ...contact, dateOfBirth: contact.dateOfBirth.slice(0, 10), joiningDate: contact.joiningDate.slice(0, 10) });
     }
 
     const handleReadMore = () => {
@@ -33,7 +34,7 @@ const SingleContact = ({ contact, bgColor }: { contact: ContactDataType, bgColor
                     <p>Joining Date: <span className="text-[#1b263b] ms-3 font-semibold">{contact.joiningDate}</span></p>
                 </>}
             </div>
-            <span onClick={handleReadMore} className={`absolute text-white text-2xl bottom-0 left-[50%] cursor-pointer`} >{readMore ? <RiArrowUpDoubleFill /> : <RiArrowDownDoubleFill /> } </span>
+            <span onClick={handleReadMore} className={`absolute text-white text-2xl bottom-0 left-[50%] cursor-pointer`} >{readMore ? <RiArrowUpDoubleFill /> : <RiArrowDownDoubleFill />} </span>
             <div className="flex gap-4 text-xl absolute top-8 right-2 text-white">
                 <FaEdit onClick={handleUpdateClick} className="cursor-pointer text-[#06aed5] text-2xl" />
                 <MdDeleteForever onClick={() => deleteContact(contact._id)} className="cursor-pointer text-[#ef2917] text-2xl" />

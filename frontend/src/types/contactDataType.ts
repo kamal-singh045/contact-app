@@ -1,3 +1,4 @@
+
 export interface ContactDataType {
     _id: string;
     firstName: string;
@@ -29,4 +30,5 @@ export interface ContactsContextType {
     pageLimit: number;
     setCurrentPage: (_: number) => void;
     currentPage: number;
+    methods: any;
 }
