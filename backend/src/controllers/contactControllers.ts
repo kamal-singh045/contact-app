@@ -2,20 +2,23 @@ import { RequestHandler } from "express";
 import contactsModel from "../models/contactsModel";
 import { StatusCodeEnum } from "../enums/statusCodeEnum";
 import { RoleEnum } from "../enums/roleEnum";
-import { AddContactSchema, UpdateContactSchema } from "../validators/contactValidation";
+import { AddContactSchema } from "../validators/contactValidation";
+import mongoose from "mongoose";
 
 class ContactControllers {
 	addContactController: RequestHandler = async (req, res, next) => {
 		try {
 			const validatedData = await AddContactSchema.validate(req.body).catch(err => err);
-			if (validatedData.errors && validatedData.errors.length) return res.status(StatusCodeEnum.FORBIDDEN).send({ success: false, message: validatedData.errors[0] });
+			if (validatedData.errors && validatedData.errors.length)
+				return res.status(StatusCodeEnum.FORBIDDEN).send({ status: false, message: validatedData.errors[0] });
 
 			const alreadyExists = await contactsModel.findOne({ email: req.body.email });
-			if (alreadyExists) return res.status(StatusCodeEnum.CONFLICT).send({ success: false, message: "Email Already Exists." });
-			const newUserData = { ...req.body };
-			delete newUserData._id; //default empty id is coming from frontend, so first remove it.
-			await contactsModel.create(newUserData);
-			return res.status(StatusCodeEnum.CREATED).send({ success: true, message: "Contact is Created" });
+			if ((!req.body._id && alreadyExists) || (alreadyExists && (alreadyExists?.email !== req.body.email || (alreadyExists?.email === req.body.email && alreadyExists._id.toString() != req.body._id)))
+			) return res.status(StatusCodeEnum.CONFLICT).send({ status: false, message: "Email Already Exists." });
+
+			const id = req.body._id ? req.body._id : new mongoose.Types.ObjectId();
+			await contactsModel.findByIdAndUpdate({ _id: id }, req.body, { new: true, upsert: true });
+			return res.status(StatusCodeEnum.CREATED).send({ status: true, message: "Contact is Created" });
 		} catch (error) {
 			console.log(error);
 			next();
@@ -26,26 +29,10 @@ class ContactControllers {
 		try {
 			const idToDelete = req.query.id;
 			const checkExists = await contactsModel.findOne({ _id: idToDelete });
-			if (!checkExists) return res.status(StatusCodeEnum.NOT_FOUND).send({ success: false, message: "Contact does not exists" });
+			if (!checkExists) return res.status(StatusCodeEnum.NOT_FOUND).send({ status: false, message: "Contact does not exists" });
 
 			await contactsModel.findByIdAndDelete(idToDelete);
-			return res.status(StatusCodeEnum.OK).send({ success: true, message: "Contact deleted Successfully." });
-		} catch (error) {
-			next();
-		}
-	}
-
-	updateContactController: RequestHandler = async (req, res, next) => {
-		try {
-			const validatedData = await UpdateContactSchema.validate({ query: req.query, body: req.body }).catch(err => err);
-			if (validatedData.errors && validatedData.errors.length) return res.status(StatusCodeEnum.FORBIDDEN).send({ success: false, message: validatedData.errors[0] });
-
-			const idToUpdate = req.query.id;
-			const checkExists = await contactsModel.findOne({ _id: idToUpdate });
-			if (!checkExists) return res.status(StatusCodeEnum.NOT_FOUND).send({ success: false, message: "Contact does not exists" });
-
-			await contactsModel.findByIdAndUpdate(idToUpdate, { $set: req.body });
-			return res.status(StatusCodeEnum.OK).send({ success: true, message: "Contact updated Successfully." });
+			return res.status(StatusCodeEnum.OK).send({ status: true, message: "Contact deleted Successfully." });
 		} catch (error) {
 			next();
 		}
@@ -66,7 +53,7 @@ class ContactControllers {
 
 			const totalContacts = await contactsModel.find(filterObj);
 			const allData = await contactsModel.find(filterObj).skip((Number(current) - 1) * Number(limit)).limit(Number(limit));
-			return res.status(StatusCodeEnum.OK).send({ success: true, message: "All contacts fetched", data: { data: allData, totalCount: totalContacts.length } });
+			return res.status(StatusCodeEnum.OK).send({ status: true, message: "All contacts fetched", data: { data: allData, totalCount: totalContacts.length } });
 		} catch (error) {
 			next();
 		}

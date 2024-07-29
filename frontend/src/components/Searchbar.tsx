@@ -4,15 +4,15 @@ import { ContactsContext } from "../contexts/ContactsContext";
 import { ContactsContextType } from "../types/contactDataType";
 
 const Searchbar = () => {
-	const {setSearchFilter} = useContext(ContactsContext) as ContactsContextType;
+	const { setSearchFilter } = useContext(ContactsContext) as ContactsContextType;
 	const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const currentValue = useRef<HTMLInputElement>(null);
 
 	const debounce = (delay: number) => {
-		return function() {
-			if(debounceTimeout.current) clearTimeout(debounceTimeout.current);
+		return function () {
+			if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
 			debounceTimeout.current = setTimeout(() => {
-				currentValue.current && setSearchFilter(currentValue.current.value);
+				currentValue.current && currentValue.current.value.trim() && setSearchFilter(currentValue.current.value.trim());
 				debounceTimeout.current = null;
 			}, delay);
 		}

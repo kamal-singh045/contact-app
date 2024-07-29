@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import { ContactDataType, ContactsContextType } from "../types/contactDataType";
-import customAxios from "../helpers/customAxios";
+import { AxiosClient } from "../helpers/customAxios";
 import { PageLimitEnum } from "../enums/pageLimit";
 import { RoleEnum } from "../enums/roleEnum";
 import { useForm } from "react-hook-form";
@@ -32,14 +32,13 @@ const UsersProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     const [roleFilter, setRoleFilter] = useState<string>(RoleEnum.ALL);
     const [searchFilter, setSearchFilter] = useState<string>("");
     const [totalContacts, setTotalContacts] = useState<number>(0);
-    const methods = useForm<ContactDataType>({
-        resolver: zodResolver(ContactSchema)
-    });
+
+    const methods = useForm<ContactDataType>({ resolver: zodResolver(ContactSchema) });
 
     useEffect(() => {
         async function fetchData() {
-            const response = await customAxios({ method: "get", url: `get-all-contacts/?role=${roleFilter}&search=${searchFilter}&&current=${currentPage}&limit=${pageLimit}` });
-            if (response.success) {
+            const response = await AxiosClient.get(`/get-all-contacts/?role=${roleFilter}&search=${searchFilter}&&current=${currentPage}&limit=${pageLimit}`);
+            if (response.status) {
                 setContacts(response.data.data);
                 setTotalContacts(response.data.totalCount);
             }
@@ -48,22 +47,22 @@ const UsersProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     }, [currentPage, pageLimit, roleFilter, searchFilter]);
 
     const addContact = async (contact: ContactDataType) => {
-        const response = await customAxios({ method: "post", url: "add-contact", data: contact });
+        const response = await AxiosClient.post("/add-contact", { ...contact });
         console.log(response);
-        if (response.success) setContacts([...contacts, contact]);
+        if (response.status) setContacts([...contacts, contact]);
     }
 
     const updateContact = async (contact: ContactDataType) => {
-        const response = await customAxios({ method: "put", url: `update-contact/?id=${contact._id}`, data: contact });
-        if (response.success) setContacts([...contacts].map(ele => {
+        const response = await AxiosClient.put(`/update-contact`, { ...contact });
+        if (response.status) setContacts([...contacts].map(ele => {
             if (ele._id === contact._id) return contact;
             else return ele;
         }));
     }
 
     const deleteContact = async (id: string) => {
-        const response = await customAxios({ method: 'delete', url: `delete-contact/?id=${id}` });
-        if (response.success) setContacts([...contacts].filter(ele => ele._id !== id));
+        const response = await AxiosClient.delete(`delete-contact/?id=${id}`);
+        if (response.status) setContacts([...contacts].filter(ele => ele._id !== id));
     }
 
     return (

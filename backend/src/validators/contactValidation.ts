@@ -11,7 +11,7 @@ const AddContactSchema = yup.object({
 		if (this.isType(value)) return value;
 		return parse(originalValue, "dd.MM.yyyy", new Date());
 	}).typeError("Invalid Date of Birth").required("Date of Birth is Required"),
-	contactNumber: yup.string().length(10, "Contact Number must have 10 digits").matches(/^[6-9]{1}[0-9]{9}$/, "Invalid Contact Number"),
+	contactNumber: yup.string().length(10, "Contact Number must have 10 digits").matches(/^[6-9]\d{9}$/, "Invalid Contact Number"),
 	role: yup.mixed<RoleEnum>().oneOf(Object.values(RoleEnum)),
 	address: yup.string().min(1).required("Address is Required"),
 	joiningDate: yup.date().transform(function (value, originalValue) {
@@ -21,11 +21,4 @@ const AddContactSchema = yup.object({
 	salary: yup.string().matches(/^\d{0,10}(\.\d{0,2})?$/, "Salary must be a valid number")
 });
 
-const UpdateContactSchema = yup.object({
-	body: AddContactSchema,
-	query: yup.object({
-		id: yup.string().length(24, "Invalid Contact Id").required("Id is required to update the contact")
-	})
-});
-
-export { AddContactSchema, UpdateContactSchema };
+export { AddContactSchema };
