@@ -1,9 +1,9 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import dbConnection from './config/dbConnection';
-import errorHandler from './middlewares/errorHandler';
-import contactRoutes from './routes/contactsRoutes';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import dbConnection from "./config/dbConnection";
+import errorHandler from "./middlewares/errorHandler";
+import contactRoutes from "./routes/contactsRoutes";
 dotenv.config();
 
 const app = express();
